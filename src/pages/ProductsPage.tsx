@@ -1,7 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "../lib/types";
 import { fetchProducts } from "../lib/api";
-import { Card, CardContent, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Link } from "react-router-dom";
 
 function ProductsPage() {
   const { data, error, isLoading } = useQuery<Product[]>({
@@ -23,6 +30,13 @@ function ProductsPage() {
                   <p>{product.description}</p>
                   <p>Price: ${product.price.toFixed(2)}</p>
                 </CardContent>
+                <CardFooter>
+                  <Button>
+                    <Link to={`/product/${product._id}`}>
+                      View {product.name}'s details
+                    </Link>
+                  </Button>
+                </CardFooter>
               </Card>
             ))}
         </div>

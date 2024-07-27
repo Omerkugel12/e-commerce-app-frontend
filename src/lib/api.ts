@@ -28,6 +28,15 @@ export async function fetchProducts() {
   }
 }
 
+export async function fetchProduct(productId: string) {
+  try {
+    const { data } = await api.get(`/product/${productId}`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function fetchAllCartItems() {
   try {
     const { data } = await api.get(`/cart`);
