@@ -27,3 +27,12 @@ export async function fetchProducts() {
     console.log(error);
   }
 }
+
+export async function fetchAllCartItems() {
+  try {
+    const { data } = await api.get(`/cart`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
