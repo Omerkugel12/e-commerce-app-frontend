@@ -38,3 +38,8 @@ export async function addToCart(productId: string) {
   const { data } = await api.patch("/cart/create", { productId: productId });
   return data;
 }
+
+export async function removeFromCart(productId: string) {
+  const { data } = await api.patch(`/cart/delete`, { productId: productId });
+  return data;
+}
