@@ -20,28 +20,21 @@ api.interceptors.request.use(
 );
 
 export async function fetchProducts() {
-  try {
-    const { data } = await api.get("/product");
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+  const { data } = await api.get("/product");
+  return data;
 }
 
 export async function fetchProduct(productId: string) {
-  try {
-    const { data } = await api.get(`/product/${productId}`);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+  const { data } = await api.get(`/product/${productId}`);
+  return data;
 }
 
 export async function fetchAllCartItems() {
-  try {
-    const { data } = await api.get(`/cart`);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+  const { data } = await api.get(`/cart`);
+  return data;
+}
+
+export async function addToCart(productId: string) {
+  const { data } = await api.patch("/cart/create", { productId: productId });
+  return data;
 }
