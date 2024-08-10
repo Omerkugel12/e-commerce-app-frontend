@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchAllCartItems } from "../lib/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchAllCartItems, queryClient, removeFromCart } from "../lib/api";
 import { CartItem } from "../lib/types";
 import {
   Card,
@@ -9,6 +9,7 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
+import { Trash2 } from "lucide-react";
 
 function CartPage() {
   const {
@@ -19,6 +20,42 @@ function CartPage() {
     queryKey: ["cart"],
     queryFn: fetchAllCartItems,
   });
+
+  const {
+    mutate: removeFromCartMutation,
+    isError: isRemoveFromCartError,
+    isPending: isRemoveFromCartPending,
+    error: removeFromCartError,
+  } = useMutation({
+    mutationFn: removeFromCart,
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: ["cart"] });
+
+      const previousCartItems = queryClient.getQueryData<CartItem[]>(["cart"]);
+
+      queryClient.setQueryData<CartItem[]>(["chart"], (oldCartItems) =>
+        oldCartItems?.map((cartItem) => ({
+          ...cartItem,
+          products: cartItem.products.filter(
+            (product) => product._id !== productId
+          ),
+        }))
+      );
+      return { previousCartItems };
+    },
+    onError: (err, productId, context) => {
+      if (context?.previousCartItems) {
+        queryClient.setQueryData(["cart"], context.previousCartItems);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
+  function handleRemoveFromCart(productId: string) {
+    removeFromCartMutation(productId);
+  }
 
   return (
     <>
@@ -40,6 +77,9 @@ function CartPage() {
                       <Link to={`/product/${product._id}`}>
                         View {product.name}'s details
                       </Link>
+                    </Button>
+                    <Button onClick={() => handleRemoveFromCart(product._id)}>
+                      <Trash2 />
                     </Button>
                   </CardFooter>
                 </Card>

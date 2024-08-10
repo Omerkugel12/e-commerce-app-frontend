@@ -1,4 +1,7 @@
+import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
+
+export const queryClient = new QueryClient();
 
 export const api = axios.create({
   baseURL:
@@ -19,8 +22,8 @@ api.interceptors.request.use(
   }
 );
 
-export async function fetchProducts() {
-  const { data } = await api.get("/product");
+export async function fetchProducts(name?: string, category?: string) {
+  const { data } = await api.get("/product", { params: { name, category } });
   return data;
 }
 

@@ -3,6 +3,7 @@ import {
   addToCart,
   fetchAllCartItems,
   fetchProduct,
+  queryClient,
   removeFromCart,
 } from "../lib/api";
 import { useParams } from "react-router-dom";
@@ -45,7 +46,12 @@ function ProductDetailsPage() {
     isError: isRemoveFromCartError,
     isPending: removeFromCartPending,
     error: removeFromCartError,
-  } = useMutation({ mutationFn: removeFromCart });
+  } = useMutation({
+    mutationFn: removeFromCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cartItems"] });
+    },
+  });
 
   function handleAddToCart(productId: string) {
     addToCartMutation(productId);
